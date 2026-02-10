@@ -2,7 +2,7 @@ import * as z from "zod";
 
 // Création du schema de validation
 export const AuthorsSchema = z.object({
-    id_author: z.number().optional(),
+    id_author: z.number().positive().optional(),
     name: z.string().max(50),
 })
 
