@@ -141,7 +141,7 @@ export class UsersController {
             return
         } catch (err) {
             res.status(500).json({
-                message: "find user failed !",
+                message: "update user failed !",
                 error: err instanceof Error ? err.message : err
             });
             return;
@@ -149,6 +149,29 @@ export class UsersController {
     }
 
     public static async deleteUser(req: Request, res: Response): Promise<void> {
+        try {
+            const idUser: number = Number(req.params.id);
+            if (isNaN(idUser)) {
+                res.status(400).json({ error: 'ID user is not valid' });
+                return;  
+            }
+
+            // Ajouter une vérif : tous les livres sont rendus
+            const servive: UsersService = new UsersService();
+            const deleteUser: number = await servive.deleteUser(idUser);
+
+            res.status(200).json({
+                message : "User delete !",
+                idUser: deleteUser
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                message: "delete user failed !",
+                error: err instanceof Error ? err.message : err
+            });
+            return;
+        }
 
     }
 }
