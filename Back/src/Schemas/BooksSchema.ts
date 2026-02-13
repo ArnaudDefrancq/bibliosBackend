@@ -7,7 +7,7 @@ export const BooksSchema = z.object({
     content: z.string(),
     publish: z.number().positive().int(),
     create_at: z.number().positive().int(),
-    id_author: z.number().positive().int()
+    id_author: z.number().positive().int().optional()
 })
 
 // Création de l'interface
