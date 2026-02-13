@@ -155,7 +155,7 @@ export class LoansController {
         }
     }
 
-    public static async deleteUser(req: Request, res: Response): Promise<void> {
+    public static async deleteLoan(req: Request, res: Response): Promise<void> {
         try {
             const idLoan: number = Number(req.params.id);
 
@@ -169,7 +169,7 @@ export class LoansController {
             const deleteLoan: number = await servive.deleteLoan(idLoan);
 
             res.status(200).json({
-                message : "User delete !",
+                message : "Loan delete !",
                 idLoan: deleteLoan
             })
 
