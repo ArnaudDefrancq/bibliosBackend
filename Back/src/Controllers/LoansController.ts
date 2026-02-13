@@ -164,7 +164,6 @@ export class LoansController {
                 return;  
             }
 
-            // Ajouter une vérif : tous les livres sont rendus
             const servive: LoansService = new LoansService();
             const deleteLoan: number = await servive.deleteLoan(idLoan);
 
