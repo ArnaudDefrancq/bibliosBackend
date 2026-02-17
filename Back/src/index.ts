@@ -1,5 +1,6 @@
 import express from "express";
 import 'dotenv/config';
+import UserRoute from "./Routes/UsersRoute.js";
 
 const PORT = process.env.PORT_SERVER;
 const app = express();
@@ -11,6 +12,10 @@ app.get("/", (req, res) => {
         message: "Hello from the express server",
     });
 });
+
+// Routes
+app.use('/users', UserRoute);
+
 
 // Ecoute du serveur
 app.listen(PORT, () => {
