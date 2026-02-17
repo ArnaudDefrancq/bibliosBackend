@@ -3,6 +3,8 @@ import { UsersSearchSchema, type UsersSearch } from "../Schemas/UsersSearchSchem
 import { UsersService } from "../Services/UsersService.js";
 import type { Request, Response } from "express";
 import 'dotenv/config';
+import { LoansDetailsService } from "../Services/LoansDetailsService.js";
+import type { LoansDetails } from "../Schemas/LoansDetailsSchema.js";
 
 
 export class UsersController {
@@ -149,6 +151,7 @@ export class UsersController {
     }
 
     public static async deleteUser(req: Request, res: Response): Promise<void> {
+        var loan: boolean = false;
         try {
             const idUser: number = Number(req.params.id);
             if (isNaN(idUser)) {
@@ -157,12 +160,58 @@ export class UsersController {
             }
 
             // Ajouter une vérif : tous les livres sont rendus
-            const servive: UsersService = new UsersService();
-            const deleteUser: number = await servive.deleteUser(idUser);
+            const service: UsersService = new UsersService();
+            const serviceDetail: LoansDetailsService = new LoansDetailsService()
+
+            const findUser: Users | null = await service.findUserById(idUser);
+
+            if (!findUser) {
+                res.status(500).json({
+                    message: "find user failed !"
+                });
+                return;
+            }
+
+            if (findUser.isActive == 0) {
+                res.status(500).json({
+                    message: "user already delete !"
+                });
+                return;
+            }
+
+            const options = {
+                where: `user_name LIKE ? AND user_firstname LIKE ?`,
+                params: [`${findUser.name}`, `${findUser.firstname}`]
+            }
+            const checkLoanDetail: LoansDetails[] = await serviceDetail.findLoansDetails(options);
+            if (checkLoanDetail && checkLoanDetail.length == 0) {
+                res.status(500).json({
+                    message: "find LoansDetails failed !"
+                });
+                return;
+            }
+
+            checkLoanDetail.forEach(x => {
+                if (x.status == "En cours") {
+                    loan = true;
+                }
+            })
+
+            if (loan) {
+                res.status(500).json({
+                    message: "User loan a book, you cant delete this user"
+                });
+                return;
+            }
+
+            const partialUser : Partial<Users> = {
+                isActive: 0
+            }
+            const updateUser: number = await service.updateUser(idUser, partialUser);
 
             res.status(200).json({
                 message : "User delete !",
-                idUser: deleteUser
+                idUser: updateUser
             })
 
         } catch (err) {
