@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { LoansDetailsController } from "../Controllers/LoansDetailsController.js";
 
-export class AuthorsRoute {
+class LoansDetailsRoute {
     public router: Router;
 
     constructor() {
@@ -14,3 +14,5 @@ export class AuthorsRoute {
         this.router.get('/:id', LoansDetailsController.findloanDetailsById);
     }
 }
+
+export default new LoansDetailsRoute().router;

@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { LoansController } from "../Controllers/LoansController.js";
 
-export class AuthorsRoute {
+class LoansRoute {
     public router: Router;
 
     constructor() {
@@ -17,3 +17,5 @@ export class AuthorsRoute {
         this.router.delete('/:id', LoansController.deleteLoan)
     }
 }
+
+export default new LoansRoute().router;

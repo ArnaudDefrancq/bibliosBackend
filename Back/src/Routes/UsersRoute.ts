@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { UsersController } from "../Controllers/UsersController.js";
 
-export class UserRoute {
+class UserRoute {
     public router: Router;
 
     constructor() {
@@ -20,3 +20,6 @@ export class UserRoute {
         this.router.put('/:id', UsersController.deleteUser);
     }
 }
+
+
+export default new UserRoute().router;

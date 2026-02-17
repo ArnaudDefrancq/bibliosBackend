@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { BooksController } from "../Controllers/BooksController.js";
 
-export class AuthorsRoute {
+class BooksRoute {
     public router: Router;
 
     constructor() {
@@ -17,3 +17,5 @@ export class AuthorsRoute {
         this.router.delete('/:id', BooksController.deleteBook)
     }
 }
+
+export default new BooksRoute().router;
