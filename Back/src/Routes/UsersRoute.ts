@@ -14,7 +14,9 @@ export class UserRoute {
         // Ajouter les routes pour faire les jointures
         this.router.get('/', UsersController.findUsers);
         this.router.get('/:id', UsersController.findUserById);
+        // update
         this.router.put('/:id', UsersController.updateUser);
-        this.router.delete('/:id', UsersController.deleteUser)
+        // Delete = mettre le isActive = 0
+        this.router.put('/:id', UsersController.deleteUser);
     }
 }
