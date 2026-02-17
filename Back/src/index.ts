@@ -9,6 +9,9 @@ import LoansDetailsRoute from "./Routes/LoansDetailsRoute.js";
 const PORT = process.env.PORT_SERVER;
 const app = express();
 
+app.use(express.json())
+app.use(express.urlencoded({extends: true}))
+
 // Route init
 app.get("/", (req, res) => {
     res.status(200).json({
