@@ -3,6 +3,9 @@ import 'dotenv/config';
 import { BooksSchema, type Books } from "../Schemas/BooksSchema.js";
 import { BooksSearchSchema, type BooksSearch } from "../Schemas/BooksSearchSchema.js";
 import { BooksService } from "../Services/BooksService.js";
+import { LoansDetailsService } from "../Services/LoansDetailsService.js";
+import { LoansDetailsSchema, type LoansDetails } from "../Schemas/LoansDetailsSchema.js";
+
 
 
 export class BooksController {
@@ -145,6 +148,7 @@ export class BooksController {
     }
 
     public static async deleteBook(req: Request, res: Response): Promise<void> {
+        var loan: boolean = false;
         try {
             const idBook: number = Number(req.params.id);
 
@@ -153,8 +157,42 @@ export class BooksController {
                 return;  
             }
 
-            // Ajouter une vérif : tous les livres sont rendus
+            const serviceDetail: LoansDetailsService = new LoansDetailsService();
             const service: BooksService = new BooksService();
+
+            const findBook: Books | null = await service.findBookById(idBook); 
+            if (!findBook) {
+                res.status(500).json({
+                    message: "find books failed !"
+                });
+                return;
+            }
+
+            const options = {
+                where: `book_title LIKE ?`,
+                params: [`${findBook.title}`]
+            }
+            const checkLoanDetail: LoansDetails[] = await serviceDetail.findLoansDetails(options); 
+            
+            if (checkLoanDetail && checkLoanDetail.length == 0) {
+                res.status(500).json({
+                    message: "find LoansDetails failed !"
+                });
+                return;
+            }
+
+            checkLoanDetail.forEach(x => {
+                if (x.status == "En cours") {
+                    loan = true;
+                }
+            })
+            
+            if (loan) {
+                res.status(500).json({
+                    message: "Book loan, you cant delete this book"
+                });
+                return;
+            }
             const deleteBook: number = await service.deleteBook(idBook);
 
             res.status(200).json({
