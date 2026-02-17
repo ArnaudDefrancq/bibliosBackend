@@ -8,6 +8,7 @@ export const UserSchema = z.object({
     address: z.string().max(255),
     phone: z.string().max(50),
     birth: z.number().positive().int(),
+    isActive: z.number().int().positive().default(1),
     create_at: z.number().positive().int()
 })
 
