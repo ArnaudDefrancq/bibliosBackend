@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { UsersController } from "../Controllers/UsersController.js";
 
-class UserRoute {
+class UsersRoute {
     public router: Router;
 
     constructor() {
@@ -17,9 +17,9 @@ class UserRoute {
         // update
         this.router.put('/:id', UsersController.updateUser);
         // Delete = mettre le isActive = 0
-        this.router.put('/:id', UsersController.deleteUser);
+        this.router.put('/:id/delete', UsersController.deleteUser);
     }
 }
 
 
-export default new UserRoute().router;
+export default new UsersRoute().router;
