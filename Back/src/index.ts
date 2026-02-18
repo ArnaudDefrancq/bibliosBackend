@@ -6,6 +6,7 @@ import BooksRoute from "./Routes/BooksRoute.js";
 import AuthorsRoute from "./Routes/AuthorsRoute.js";
 import LoansRoute from "./Routes/LoansRoute.js";
 import LoansDetailsRoute from "./Routes/LoansDetailsRoute.js";
+import { Database } from "./Database/Database.js";
 
 const PORT = process.env.PORT_SERVER;
 const app = express();
@@ -30,6 +31,19 @@ app.use('/loans-details', LoansDetailsRoute)
 
 
 // Ecoute du serveur
-app.listen(PORT, () => {
-    console.log(`✅ Server running at http://localhost:${PORT}`)
-}) 
+async function startServer() {
+    try {
+        // On initialise le pool UNE SEULE FOIS ici
+        await Database.initPool(); 
+        console.log("✅ Database pool initialized");
+
+        app.listen(3000, () => {
+            console.log("🚀 Server running on http://localhost:3000");
+        });
+    } catch (error) {
+        console.error("❌ Failed to start server:", error);
+        process.exit(1);
+    }
+} 
+
+startServer();
