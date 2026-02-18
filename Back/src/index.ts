@@ -38,7 +38,7 @@ async function startServer() {
         console.log("✅ Database pool initialized");
 
         app.listen(3000, () => {
-            console.log("🚀 Server running on http://localhost:3000");
+            console.log(`🚀 Server running on http://localhost:${PORT}`);
         });
     } catch (error) {
         console.error("❌ Failed to start server:", error);
