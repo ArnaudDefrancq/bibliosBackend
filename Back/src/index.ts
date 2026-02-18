@@ -1,6 +1,7 @@
 import express from "express";
 import 'dotenv/config';
-import UserRoute from "./Routes/UsersRoute.js";
+
+import UsersRoute from "./Routes/UsersRoute.js";
 import BooksRoute from "./Routes/BooksRoute.js";
 import AuthorsRoute from "./Routes/AuthorsRoute.js";
 import LoansRoute from "./Routes/LoansRoute.js";
@@ -10,7 +11,7 @@ const PORT = process.env.PORT_SERVER;
 const app = express();
 
 app.use(express.json())
-app.use(express.urlencoded({extends: true}))
+app.use(express.urlencoded({extended: true}))
 
 // Route init
 app.get("/", (req, res) => {
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use('/users', UserRoute);
+app.use('/users', UsersRoute);
 app.use('/books', BooksRoute);
 app.use('/authors', AuthorsRoute);
 app.use('/loans', LoansRoute);
