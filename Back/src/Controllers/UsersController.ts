@@ -1,4 +1,4 @@
-import { UserSchema, type Users } from "../Schemas/UsersSchema.js";
+import { UserSchema, UserUpdateSchema, type Users } from "../Schemas/UsersSchema.js";
 import { UsersSearchSchema, type UsersSearch } from "../Schemas/UsersSearchSchema.js";
 import { UsersService } from "../Services/UsersService.js";
 import type { Request, Response } from "express";
@@ -121,8 +121,9 @@ export class UsersController {
                 res.status(400).json({ error: 'ID user is not valid' });
                 return;  
             }
-
-            const result = UserSchema.safeParse(req.body);
+            
+            const result = UserUpdateSchema.partial().safeParse(req.body);
+            console.log(result)
             if (!result.success) {
             res.status(400).json({
                 message: 'Validation failed !',
