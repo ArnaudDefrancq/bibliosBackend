@@ -123,7 +123,6 @@ export class UsersController {
             }
             
             const result = UserUpdateSchema.partial().safeParse(req.body);
-            console.log(result)
             if (!result.success) {
             res.status(400).json({
                 message: 'Validation failed !',
@@ -185,9 +184,9 @@ export class UsersController {
                 params: [`${findUser.name}`, `${findUser.firstname}`]
             }
             const checkLoanDetail: LoansDetails[] = await serviceDetail.findLoansDetails(options);
-            if (checkLoanDetail && checkLoanDetail.length == 0) {
+            if (checkLoanDetail.length > 0) {
                 res.status(500).json({
-                    message: "find LoansDetails failed !"
+                    message: "find LoansDetails  !"
                 });
                 return;
             }
