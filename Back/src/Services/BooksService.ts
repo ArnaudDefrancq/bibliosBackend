@@ -16,8 +16,8 @@ export class BooksService {
         return await this.booksDAO.find(options);
     }
 
-    public async findBookById(id: number): Promise<Books | null> {
-        return await this.booksDAO.findById(id);
+    public async findBookById(id: number, join?: string): Promise<Books | null> {
+        return await this.booksDAO.findById(id, join);
     }
 
     public async updateBook(id: number, book: Partial<Books>): Promise<number> {
