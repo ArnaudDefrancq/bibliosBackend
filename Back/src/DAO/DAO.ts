@@ -33,9 +33,9 @@ export class DAO<T> {
         return rows as T[]
     }
 
-    public async findById(id: number): Promise<T | null> {
+    public async findById(id: number, join?: string): Promise<T | null> {
         const db = Database.getPool();
-        const queryString = `SELECT * FROM ${this.fullTableName} WHERE ${this.primaryKey} = ?`;
+        const queryString = `SELECT * FROM ${this.fullTableName} ${join ? join : ''} WHERE ${this.primaryKey} = ?`;
         const [rows] = await db.query<RowDataPacket[]>(queryString, id);
 
         return (rows[0] as T) || null;
@@ -53,9 +53,9 @@ export class DAO<T> {
         const db = Database.getPool();
         const sql = `DELETE FROM ${this.fullTableName} WHERE ${this.primaryKey} = ?`;
         
-        const [result] = await (db as any).promise().query(sql, [id]);
+        const [result] = await db.query<ResultSetHeader>(sql, [id]);
         
-        return (result as ResultSetHeader).affectedRows;
+        return result.affectedRows;
     }
     
 }
