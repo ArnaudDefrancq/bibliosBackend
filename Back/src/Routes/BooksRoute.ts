@@ -10,9 +10,11 @@ class BooksRoute {
     }
 
     private initializeRoutes(): void {
-        this.router.post('/author', BooksController.createBook);
+        this.router.post('/book', BooksController.createBook);
         this.router.get('/', BooksController.findBooks);
+        this.router.get('/with-author', BooksController.findBooks)
         this.router.get('/:id', BooksController.findBookById);
+        this.router.get('/with-author/:id', BooksController.findBookById)
         this.router.put('/:id', BooksController.updateBook);
         this.router.delete('/:id', BooksController.deleteBook)
     }
