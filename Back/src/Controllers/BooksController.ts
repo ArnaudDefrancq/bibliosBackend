@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import 'dotenv/config';
-import { BooksSchema, type Books } from "../Schemas/BooksSchema.js";
+import { BooksSchema, BookUpdateSchema, type Books } from "../Schemas/BooksSchema.js";
 import { BooksSearchSchema, type BooksSearch } from "../Schemas/BooksSearchSchema.js";
 import { BooksService } from "../Services/BooksService.js";
 import { LoansDetailsService } from "../Services/LoansDetailsService.js";
@@ -56,17 +56,25 @@ export class BooksController {
             const service: BooksService = new BooksService();
             
             const filters : string[] = [];
-            const params: any[] = [];
+            const params: string[] = [];
+
+            
 
             // Permet de definir options.where + options.params
             if (criteria.title) {
-                filters.push("title = ?");
-                params.push(`${criteria.title}`);
+                filters.push("title LIKE ?");
+                params.push(`%${criteria.title}%`);
             }
 
+            
             const options = {
                 where: (filters.length > 0) ? filters.join('AND') : undefined,
-                params
+                params,
+                join: ""
+            }
+            console.log(options)
+            if (req.path == '/with-author') {
+                options.join = `JOIN ${process.env.DB_TABLE}__authors a ON a.id_author = ${process.env.DB_TABLE}__books.id_author`;
             }
 
             const books: Books[] = await service.findBook(options);
@@ -84,15 +92,21 @@ export class BooksController {
     public static async findBookById(req: Request, res: Response): Promise<void> {
         try {
             const idBook: number = Number(req.params.id);
-
+            var join: string = "";
+            const includesAuthor = req.route.path.includes('with-author')
              if (isNaN(idBook)) {
                 res.status(400).json({ error: 'ID book is not valid' });
                 return;  
             }
 
+            if (includesAuthor) {
+                join = `JOIN ${process.env.DB_TABLE}__authors a ON a.id_author = ${process.env.DB_TABLE}__books.id_author`;
+            }
+
+
             const service: BooksService = new BooksService();
 
-            const book: Books | null = await service.findBookById(idBook);
+            const book: Books | null = await service.findBookById(idBook, join);
 
             if (!book) {
                 res.status(400).json({error: "book not found !"});
@@ -119,7 +133,7 @@ export class BooksController {
                 return;  
             }
 
-            const result = BooksSchema.safeParse(req.body);
+            const result = BookUpdateSchema.safeParse(req.body);
             if (!result.success) {
             res.status(400).json({
                 message: 'Validation failed !',
@@ -174,9 +188,9 @@ export class BooksController {
             }
             const checkLoanDetail: LoansDetails[] = await serviceDetail.findLoansDetails(options); 
             
-            if (checkLoanDetail && checkLoanDetail.length == 0) {
+            if (checkLoanDetail.length > 0) {
                 res.status(500).json({
-                    message: "find LoansDetails failed !"
+                    message: "find LoansDetails  !"
                 });
                 return;
             }
@@ -193,7 +207,9 @@ export class BooksController {
                 });
                 return;
             }
+            
             const deleteBook: number = await service.deleteBook(idBook);
+            console.log('ici')
 
             res.status(200).json({
                 message : "Book delete !",
