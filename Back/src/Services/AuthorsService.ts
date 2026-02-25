@@ -13,8 +13,8 @@ export class AuthorsService {
         return await this.authorDAO.create(author);
     }
     
-    public async findAuthor(options: {where?: string, params?: any[], join?: string}): Promise<Author[]> {
-        return await this.authorDAO.find(options);
+    public async findAuthor(options: {where?: string, params?: any[], join?: string}, select: string = '*'): Promise<Author[]> {
+        return await this.authorDAO.find(options, select);
     }
 
     public async findAuthorById(id: number): Promise<Author | null> {
