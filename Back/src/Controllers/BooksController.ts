@@ -66,13 +66,17 @@ export class BooksController {
                 params.push(`%${criteria.title}%`);
             }
 
+            if (criteria.id_author) {
+                filters.push("id_author = ?");
+                params.push(`%${criteria.id_author}%`);
+            }
             
             const options = {
                 where: (filters.length > 0) ? filters.join('AND') : undefined,
                 params,
                 join: ""
             }
-            console.log(options)
+            
             if (req.path == '/with-author') {
                 options.join = `JOIN ${process.env.DB_TABLE}__authors a ON a.id_author = ${process.env.DB_TABLE}__books.id_author`;
             }
