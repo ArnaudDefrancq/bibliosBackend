@@ -12,6 +12,7 @@ class AuthorsRoute {
     private initializeRoutes(): void {
         this.router.post('/author', AuthorsController.createAuthor);
         this.router.get('/', AuthorsController.findAuthors);
+        this.router.get('/with-book', AuthorsController.findAuthors);
         this.router.get('/:id', AuthorsController.findAuthorById);
         this.router.put('/:id', AuthorsController.updateAuthor);
         this.router.delete('/:id', AuthorsController.deleteAuthor)
