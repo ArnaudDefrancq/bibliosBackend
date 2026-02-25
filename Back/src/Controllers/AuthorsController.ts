@@ -3,6 +3,8 @@ import 'dotenv/config';
 import { AuthorsSchema, type Author } from "../Schemas/AuthorsSchema.js";
 import { AuthorsService } from "../Services/AuthorsService.js";
 import { AuthorsSearchSchema, type AuthorsSearch } from "../Schemas/AuthorsSearchSchema.js";
+import { BooksService } from "../Services/BooksService.js";
+import type { Books } from "../Schemas/BooksSchema.js";
 
 
 export class AuthorsController {
@@ -63,10 +65,19 @@ export class AuthorsController {
 
             const options = {
                 where: (filters.length > 0) ? filters.join('AND') : undefined,
-                params
+                params,
+                join: ""
+            }
+            var select: string = "*"
+
+            if (req.path == '/with-book') {
+                options.join = `JOIN ${process.env.DB_TABLE}__books b ON b.id_author = ${process.env.DB_TABLE}__authors.id_author`;
+                select = `name, title`
             }
 
-            const author: Author[] = await service.findAuthor(options);
+            const author: Author[] = await service.findAuthor(options, select);
+
+            console.log()
             res.status(200).json({author});
             return;
         } catch (err) {
@@ -81,8 +92,8 @@ export class AuthorsController {
     public static async findAuthorById(req: Request, res: Response): Promise<void> {
         try {
             const idAuthor: number = Number(req.params.id);
-
-             if (isNaN(idAuthor)) {
+            
+            if (isNaN(idAuthor)) {
                 res.status(400).json({ error: 'ID author is not valid' });
                 return;  
             }
@@ -155,6 +166,20 @@ export class AuthorsController {
 
             
             const service: AuthorsService = new AuthorsService();
+            const bookService: BooksService = new BooksService();
+            const options = {
+                where: `id_author = ?`,
+                params: [`${idAuthor}`]
+            }
+            const findBook: Books[]= await bookService.findBook(options);
+
+            if (findBook.length > 0) {
+                res.status(500).json({
+                message: "you cant delete this author because we find a book !",
+            });
+            return;
+            }
+
             const deleteAuthor: number = await service.deleteAuthor(idAuthor);
 
             res.status(200).json({
