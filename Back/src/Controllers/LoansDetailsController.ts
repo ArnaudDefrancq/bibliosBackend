@@ -26,9 +26,9 @@ export class LoansDetailsController {
             const params: any[] = [];
 
             // Permet de definir options.where + options.params
-            if (criteria.user_firstname) {
-                filters.push("user_firstname = ?");
-                params.push(`${criteria.user_firstname}`);
+            if (criteria.user_name) {
+                filters.push("user_name = ?");
+                params.push(`${criteria.user_name}`);
             }
             if (criteria.user_firstname) {
                 filters.push("user_firstname = ?");
@@ -42,11 +42,12 @@ export class LoansDetailsController {
                 filters.push("status = ?");
                 params.push(`${criteria.status}`);                
             }
-
+            
             const options = {
                 where: (filters.length > 0) ? filters.join('AND') : undefined,
                 params
             }
+            console.log(options)
 
             const loansDetails: LoansDetails[] = await service.findLoansDetails(options);
             res.status(200).json({loansDetails});
