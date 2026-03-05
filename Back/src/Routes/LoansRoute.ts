@@ -10,7 +10,7 @@ class LoansRoute {
     }
 
     private initializeRoutes(): void {
-        this.router.post('/author', LoansController.createLoans);
+        this.router.post('/loan', LoansController.createLoans);
         this.router.get('/', LoansController.findLoans);
         this.router.get('/:id', LoansController.findLoanById);
         this.router.put('/:id', LoansController.updateLoan);
