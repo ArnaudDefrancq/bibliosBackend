@@ -1,9 +1,14 @@
 import type { Request, Response } from "express";
 import 'dotenv/config';
-import { LoansSchema, type Loans } from "../Schemas/LoansSchema.js";
+import { LoansSchema, LoanUpdateSchema, type Loans } from "../Schemas/LoansSchema.js";
 import { LoansService } from "../Services/LoansService.js";
 import { LoansSearchSchema, type LoansSearch } from "../Schemas/LoansSearchSchema.js";
+import { UsersService } from "../Services/UsersService.js";
+import { BooksService } from "../Services/BooksService.js";
+import type { Users } from "../Schemas/UsersSchema.js";
+import type { Books } from "../Schemas/BooksSchema.js";
 
+//TODO : Check si le controller est OK
 
 export class LoansController {
 
@@ -21,6 +26,19 @@ export class LoansController {
 
         try {
             const service: LoansService = new LoansService();
+            const userService: UsersService = new UsersService();
+            const bookService: BooksService = new BooksService();
+
+            const user: Users | null = await userService.findUserById(loanData.id_user);
+            const book: Books | null = await bookService.findBookById(loanData.id_book);
+
+            if (!user || !book) {
+                res.status(400).json({
+                message: 'User or book invalid !'
+            })
+            return;
+            }
+
             const newId = await service.createLoan(loanData);
             res.status(201).json({
                 message: 'loan create !',
@@ -120,7 +138,8 @@ export class LoansController {
                 return;  
             }
 
-            const result = LoansSchema.safeParse(req.body);
+            const result = LoanUpdateSchema.safeParse(req.body);
+            console.log(result)
             if (!result.success) {
             res.status(400).json({
                 message: 'Validation failed !',
@@ -131,12 +150,7 @@ export class LoansController {
 
             const loanData: Partial<Loans> = result.data;
 
-            if (loanData.date_rendered == 0) {
-                res.status(400).json({
-                    message: 'Validation failed date_rendered = 0!',
-                })
-                return;
-            }
+            loanData.date_rendered = Math.floor(Date.now() / 1000); 
 
             const service: LoansService = new LoansService();
 
