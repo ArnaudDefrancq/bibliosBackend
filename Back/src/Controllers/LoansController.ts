@@ -8,7 +8,6 @@ import { BooksService } from "../Services/BooksService.js";
 import type { Users } from "../Schemas/UsersSchema.js";
 import type { Books } from "../Schemas/BooksSchema.js";
 
-//TODO : Check si le controller est OK
 
 export class LoansController {
 
